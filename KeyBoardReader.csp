@@ -1,17 +1,19 @@
 		.EQU KEYBOARD_STATUS, $000
 		.EQU KEYBOARD_DATA, $001
 		.EQU FIRST, $D00
+	;	LDF# $D00		
 		LDX# $000
 		LDA# $000
-		
+
 
 POLL_KEYBD:		INB KEYBOARD_STATUS		; check the buffer for filled char
 		NOP			; cools the CPU so victim does not get sus 
 		JGE POLL_KEYBD			; nope! go - check again
 		INB KEYBOARD_DATA			; read keyboard to ACC lower mem
-		STA+ FIRST			; store the character there
-		CMX# $009			; compare XR to 10
-		JGE OUT			; jump out if XR - 10 \geq 0
-		ADX# $001			; XR++
+		STC FIRST			; store the character there
+		CMA# $047			; compare ACC to $047 (g)
+		JEQ OUT			; jump if the ACC is equal to $047 (g
+		ADX# $001
 		JMP POLL_KEYBD
+		
 OUT:		HLT
